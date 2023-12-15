@@ -139,3 +139,29 @@ float AMarchingChunk::GetInterPolationOffset(float V1, float V2) const
 	const float delta = V2 - V1;
 	return delta == 0.0f ? surfaceLevel : (surfaceLevel - V1) / delta;
 }
+
+void AMarchingChunk::DrawVertex(const FVector& location)
+{
+	FVector position;
+	FColor color;
+	float pointSize = 5.0f;
+	FVector startPosition = location;
+
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			for (int z = 0; z < size; z++)
+			{
+				position += FVector(x * 100, y * 100, z * 100);
+				if (voxels[GetVoxelIndex(x, y, z)] == -1)
+					color = FColor::Green;
+				else
+					color = FColor::Blue;
+				DrawDebugPoint(GetWorld(), position, pointSize, color, true, -1.0f);
+
+				startPosition = location;
+			}
+		}
+	}
+}

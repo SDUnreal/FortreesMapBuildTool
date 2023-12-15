@@ -30,6 +30,7 @@ public:
 	UPROPERTY(EDItAnywhere, Category = "ChunkWorld")
 	float zPosition = 0.0f;
 
+	int debugDrawCount = 0;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -37,5 +38,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION(BlueprintCallable, Category = "Voxel Visualization")
+	void CallMarchingChunkDrawVertex();
 
 };

@@ -3,6 +3,8 @@
 
 #include "Voxel/ChunkWorld.h"
 
+#include "MarchingChunk.h"
+
 // Sets default values
 AChunkWorld::AChunkWorld()
 {
@@ -23,6 +25,8 @@ void AChunkWorld::BeginPlay()
 			GetWorld()->SpawnActor<AActor>(Chunk, FVector(x * ChunkSize * CubeSize, y * ChunkSize * CubeSize, zPosition), FRotator::ZeroRotator);
 		}
 	}
+
+
 }
 
 // Called every frame
@@ -30,5 +34,15 @@ void AChunkWorld::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AChunkWorld::CallMarchingChunkDrawVertex()
+{
+	AMarchingChunk* marchingChunk = Cast<AMarchingChunk>(Chunk);
+	if (marchingChunk)
+	{
+		marchingChunk->DrawVertex(GetActorLocation());
+		UE_LOG(LogTemp, Log, TEXT("VertexDraw : %d"), debugDrawCount);
+	}
 }
 
