@@ -11,6 +11,7 @@ void AMarchingChunk::GenerateHeightMap()
 {
 	const auto position = GetActorLocation() / 100;
 
+	/*
 	for (int x = 0; x <= size; x++)
 	{
 		for (int y = 0; y <= size; y++)
@@ -31,6 +32,7 @@ void AMarchingChunk::GenerateHeightMap()
 			}
 		}
 	}
+	*/
 }
 
 void AMarchingChunk::GenerateMesh()
@@ -68,6 +70,11 @@ void AMarchingChunk::GenerateMesh()
 			}
 		}
 	}
+}
+
+void AMarchingChunk::GenerateTerrian()
+{
+	
 }
 
 void AMarchingChunk::March(int x, int y, int z, const float cube[8])
@@ -140,28 +147,3 @@ float AMarchingChunk::GetInterPolationOffset(float V1, float V2) const
 	return delta == 0.0f ? surfaceLevel : (surfaceLevel - V1) / delta;
 }
 
-void AMarchingChunk::DrawVertex(const FVector& location)
-{
-	FVector position;
-	FColor color;
-	float pointSize = 5.0f;
-	FVector startPosition = location;
-
-	for (int x = 0; x < size; x++)
-	{
-		for (int y = 0; y < size; y++)
-		{
-			for (int z = 0; z < size; z++)
-			{
-				position += FVector(x * 100, y * 100, z * 100);
-				if (voxels[GetVoxelIndex(x, y, z)] == -1)
-					color = FColor::Green;
-				else
-					color = FColor::Blue;
-				DrawDebugPoint(GetWorld(), position, pointSize, color, true, -1.0f);
-
-				startPosition = location;
-			}
-		}
-	}
-}

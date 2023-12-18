@@ -25,9 +25,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Marching Chunk")
 		bool interpolation = false;
 
+	virtual void GenerateTerrian()override;
+
 protected:
 	virtual void GenerateHeightMap() override;
 	virtual void GenerateMesh() override;
+
 
 private:
 	TArray<float> voxels;	//해당 배열은 복셀의 큐브들을 지정하는 것이 아닌, 큐브들의 꼭짓점들을 지정함.
@@ -335,7 +338,5 @@ private:
 	};
 
 public:
-
-	void DrawVertex(const FVector& Location);
-	
+	void SetVoxels(TArray<float> Voxels) { this->voxels = Voxels; }
 };

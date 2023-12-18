@@ -23,12 +23,14 @@ AChunkBase::AChunkBase()
 void AChunkBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void AChunkBase::GenerateTerrian()
+{
 	GenerateHeightMap();
 	GenerateMesh();
 
 	UE_LOG(LogTemp, Log, TEXT("VertexCount : %d"), vertexCount);
-
 	ApplyMesh();
 }
 

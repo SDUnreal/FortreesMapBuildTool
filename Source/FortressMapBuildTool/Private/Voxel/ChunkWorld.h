@@ -3,8 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include"MarchingChunk.h"
+
 #include "GameFramework/Actor.h"
 #include "ChunkWorld.generated.h"
+
+class MarchingChunk;
 
 UCLASS()
 class AChunkWorld : public AActor
@@ -16,19 +21,22 @@ public:
 	AChunkWorld();
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
-	TSubclassOf<AActor> Chunk;
+	TSubclassOf<AMarchingChunk> Chunk;
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
 	int DrawDistance = 5;
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
-	int ChunkSize = 32;
+	int ChunkSize = 64;
 
 	UPROPERTY(EDItAnywhere, Category = "ChunkWorld")
-	int CubeSize = 0;
+	int CubeSize = 100;
 
 	UPROPERTY(EDItAnywhere, Category = "ChunkWorld")
-	float zPosition = 0.0f;
+	float zPosition = 2000.0f;
+
+	TArray<float> voxels;
+	TArray<AMarchingChunk*> chunks;
 
 	int debugDrawCount = 0;
 protected:
@@ -39,7 +47,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-	UFUNCTION(BlueprintCallable, Category = "Voxel Visualization")
-	void CallMarchingChunkDrawVertex();
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "ChunkWorld")
+	void DrawVertex();
+
+	void SetVoxels(const TArray<float>& Voxels);
+
+	int GetVoxelIndex(int x, int y, int z) const;
 
 };
