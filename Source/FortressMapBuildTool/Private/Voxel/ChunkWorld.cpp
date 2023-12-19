@@ -9,23 +9,24 @@ AChunkWorld::AChunkWorld()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	voxels.Init(0, (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
-	chunks.Init(nullptr, DrawDistance * DrawDistance);
+	
 
 }
 
 // Called when the game starts or when spawned
 void AChunkWorld::BeginPlay()
 {
+	voxels.Init(0, (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
+	chunks.Init(nullptr, (2 * DrawDistance) * (2 * DrawDistance));
+
 	Super::BeginPlay();
 	int i = 0;
-
+	SetVoxels(voxels);
 	for (int x = -DrawDistance; x < DrawDistance; x++)
 	{
 		for (int y = -DrawDistance; y < DrawDistance; y++)
 		{
-			SetVoxels(voxels);
-			chunks[i] = GetWorld()->SpawnActor<AMarchingChunk>(Chunk, FVector(x * ChunkSize * CubeSize, y * ChunkSize * CubeSize, zPosition), FRotator::ZeroRotator);
+			chunks[i] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(x * ChunkSize * CubeSize, y * ChunkSize * CubeSize, zPosition), FRotator::ZeroRotator);
 			chunks[i]->SetChunkSize(ChunkSize);
 			chunks[i]->SetCubeSize(CubeSize);
 			chunks[i]->SetVoxels(voxels);
@@ -52,7 +53,7 @@ void AChunkWorld::DrawVertex()
 	{
 		for (int y = 0; y < ChunkSize; y++)
 		{
-			for (int z = 2000; z < ChunkSize; z++)
+			for (int z = 0; z < ChunkSize; z++)
 			{
 				FVector position = FVector(x * CubeSize, y * CubeSize, z * CubeSize);
 
@@ -88,6 +89,8 @@ void AChunkWorld::SetVoxels(const TArray<float>& Voxels)
 					// 내부의 점들
 					voxels[GetVoxelIndex(x, y, z)] = -1.0f;
 				}
+
+				
 			}
 		}
 	}
