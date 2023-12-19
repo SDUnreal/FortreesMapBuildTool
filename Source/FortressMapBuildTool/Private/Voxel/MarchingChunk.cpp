@@ -4,7 +4,7 @@
 
 AMarchingChunk::AMarchingChunk()
 {
-	voxels.SetNum((size + 1) * (size + 1) * (size + 1));
+	voxels.SetNum((chunkSize + 1) * (chunkSize + 1) * (chunkSize + 1));
 }
 
 void AMarchingChunk::GenerateHeightMap()
@@ -54,11 +54,11 @@ void AMarchingChunk::GenerateMesh()
 	float cube[8];	//현재 복셀의 꼭짓점 값을 저장하는 배열
 
 	//각 복셀 순회
-	for (int x = 0; x < size; x++)
+	for (int x = 0; x < chunkSize; x++)
 	{
-		for (int y = 0; y < size; y++)
+		for (int y = 0; y < chunkSize; y++)
 		{
-			for (int z = 0; z < size; z++)
+			for (int z = 0; z < chunkSize; z++)
 			{
 				for (int i = 0; i < 8; i++)
 				{
@@ -72,10 +72,6 @@ void AMarchingChunk::GenerateMesh()
 	}
 }
 
-void AMarchingChunk::GenerateTerrian()
-{
-	
-}
 
 void AMarchingChunk::March(int x, int y, int z, const float cube[8])
 {
@@ -111,9 +107,9 @@ void AMarchingChunk::March(int x, int y, int z, const float cube[8])
 		if (TriangleConnectionTable[VertexMask][3 * i] < 0) break;
 
 		//삼각형 꼭짓점 계산
-		auto v1 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i]] * 100;
-		auto v2 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 1]] * 100;
-		auto v3 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 2]] * 100;
+		auto v1 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i]] * cubeSize;
+		auto v2 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 1]] * cubeSize;
+		auto v3 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 2]] * cubeSize;
 
 		//삼각형 노멀 계산
 		auto normal = FVector::CrossProduct(v2 - v1, v3 - v1);
@@ -138,7 +134,7 @@ void AMarchingChunk::March(int x, int y, int z, const float cube[8])
 
 int AMarchingChunk::GetVoxelIndex(int x, int y, int z) const
 {
-	return z * (size + 1) * (size + 1) + y * (size + 1) + x;
+	return z * (chunkSize + 1) * (chunkSize + 1) + y * (chunkSize + 1) + x;
 }
 
 float AMarchingChunk::GetInterPolationOffset(float V1, float V2) const

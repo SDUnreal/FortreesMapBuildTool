@@ -21,13 +21,13 @@ public:
 	AChunkBase();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Chunk")
-	int size = 64;
+	int chunkSize = 64;
+	UPROPERTY(EditDefaultsOnly, Category = "Chunk")
+	int cubeSize = 100;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	virtual void GenerateTerrian();
 
 	virtual void GenerateHeightMap();
 	virtual void GenerateMesh();
@@ -38,5 +38,9 @@ protected:
 
 public:
 	void ApplyMesh() const;
+	void GenerateTerrian();
+
+	void SetCubeSize(int CubeSize) { this->cubeSize = CubeSize; }
+	void SetChunkSize(int ChunkSize) { this->chunkSize = ChunkSize; }
 
 };

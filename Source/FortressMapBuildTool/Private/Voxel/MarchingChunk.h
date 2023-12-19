@@ -25,8 +25,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Marching Chunk")
 		bool interpolation = false;
 
-	virtual void GenerateTerrian()override;
-
 protected:
 	virtual void GenerateHeightMap() override;
 	virtual void GenerateMesh() override;
@@ -339,4 +337,5 @@ private:
 
 public:
 	void SetVoxels(TArray<float> Voxels) { this->voxels = Voxels; }
+
 };

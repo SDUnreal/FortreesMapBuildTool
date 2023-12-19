@@ -26,9 +26,11 @@ void AChunkWorld::BeginPlay()
 		{
 			SetVoxels(voxels);
 			chunks[i] = GetWorld()->SpawnActor<AMarchingChunk>(Chunk, FVector(x * ChunkSize * CubeSize, y * ChunkSize * CubeSize, zPosition), FRotator::ZeroRotator);
+			chunks[i]->SetChunkSize(ChunkSize);
+			chunks[i]->SetCubeSize(CubeSize);
 			chunks[i]->SetVoxels(voxels);
 			chunks[i]->GenerateTerrian();
-
+			i++;
 		}
 	}
 	DrawVertex();
