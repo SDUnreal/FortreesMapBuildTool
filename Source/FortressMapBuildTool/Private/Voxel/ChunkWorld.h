@@ -35,9 +35,13 @@ public:
 	UPROPERTY(EDItAnywhere, Category = "ChunkWorld")
 	float zPosition = 2000.0f;
 
+	UPROPERTY(EDItAnywhere, BluePrintReadWrite, Category = "ChunkWorld")
+	FVector TargetVertex = { 0,0,0 };
+
 	TArray<float> voxels;
 	TArray<AMarchingChunk*> chunks;
 
+	int targetVertexColorCount = 1;
 	int debugDrawCount = 0;
 protected:
 	// Called when the game starts or when spawned
@@ -50,7 +54,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "ChunkWorld")
-	void DrawVertex();
+	void DrawVertex(float LifeTime);
 
 	void SetVoxels(const TArray<float>& Voxels);
 

@@ -8,9 +8,6 @@ AChunkWorld::AChunkWorld()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -34,7 +31,6 @@ void AChunkWorld::BeginPlay()
 			i++;
 		}
 	}
-	DrawVertex();
 }
 
 // Called every frame
@@ -44,7 +40,7 @@ void AChunkWorld::Tick(float DeltaTime)
 
 }
 
-void AChunkWorld::DrawVertex()
+void AChunkWorld::DrawVertex(float LifeTime)
 {
 	FColor color;
 	float pointSize = 10.0f;
@@ -57,15 +53,19 @@ void AChunkWorld::DrawVertex()
 			{
 				FVector position = FVector(x * CubeSize, y * CubeSize, z * CubeSize);
 
-				if (voxels[GetVoxelIndex(x, y, z)] == -1)
-					color = FColor::Green;
-				else
+				if (TargetVertex == FVector(x, y, z) && targetVertexColorCount == 1)
+					color = FColor::Blue;
+				else if (voxels[GetVoxelIndex(x, y, z)] == -1)
 					color = FColor::Red;
+				else
+					color = FColor::Green;
 
-				DrawDebugPoint(GetWorld(), position, pointSize, color, true, -1.0f);
+				DrawDebugPoint(GetWorld(), position, pointSize, color, true, LifeTime);
 			}
 		}
 	}
+
+	targetVertexColorCount *= -1;
 }
 
 void AChunkWorld::SetVoxels(const TArray<float>& Voxels)
