@@ -41,6 +41,11 @@ public:
 	TArray<float> voxels; // 저장해야하는 데이터 -> txt나 그외.. 언리얼에서 찾아볼게요
 	TArray<AMarchingChunk*> chunks;
 
+
+	// 파일탐색기 관련 데이터들
+	FString directory;
+	bool IsSelect;
+
 	int targetVertexColorCount = 1;
 	int debugDrawCount = 0;
 protected:
@@ -60,9 +65,14 @@ public:
 
 	int GetVoxelIndex(int x, int y, int z) const;
 
+	UFUNCTION(BlueprintCallable, Category = "editor")
 	void SaveMaps();
 
+	UFUNCTION(BlueprintCallable, Category = "editor")
 	void LoadMaps(FString path); 
+
+	UFUNCTION(BlueprintCallable, Category = "editor")
+	void LoadExplorer(FString& Directory, bool& bIsSelect);
 
 	void ToggleTargetVertex(FVector point);
 };

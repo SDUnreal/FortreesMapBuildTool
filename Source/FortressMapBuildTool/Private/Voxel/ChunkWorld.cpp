@@ -3,6 +3,12 @@
 
 #include "Voxel/ChunkWorld.h"
 
+#include "Misc/FileHelper.h"
+#include "JsonObjectConverter.h"
+#include "IDesktopPlatform.h"
+#include "DesktopPlatformModule.h"
+
+
 // Sets default values
 AChunkWorld::AChunkWorld()
 {
@@ -17,6 +23,8 @@ void AChunkWorld::BeginPlay()
 	chunks.Init(nullptr, (2 * DrawDistance) * (2 * DrawDistance));
 
 	Super::BeginPlay();
+	directory = TEXT("");
+	IsSelect = false;
 	int i = 0;
 	SetVoxels(voxels);
 	for (int x = -DrawDistance; x < DrawDistance; x++)
@@ -90,8 +98,6 @@ void AChunkWorld::SetVoxels(const TArray<float>& Voxels)
 					// 내부의 점들
 					voxels[GetVoxelIndex(x, y, z)] = -1.0f;
 				}
-
-				
 			}
 		}
 	}
@@ -107,6 +113,17 @@ void AChunkWorld::SaveMaps()
 {
 // TODO : 현재 맵을 세이브 하게 하는 기능 -> 
 
+	IsSelect = false;
+	while (IsSelect == false)
+	{
+		this->LoadExplorer(directory, IsSelect);
+	}
+	FString JsonString = TEXT("HEllo");
+	//directory.Append(TEXT("/save.json"));
+	FString Filename = TEXT("sav");
+	//FJsonObjectConverter::UStructToJsonObjectString(voxels, JsonString);
+	FFileHelper::SaveStringToFile(*JsonString, *directory );
+	directory = TEXT("");
 }
 
 
@@ -114,6 +131,23 @@ void AChunkWorld::LoadMaps(FString path)
 {
 // path에서 로드할 수 있게 해줌 
 
+}
+
+void AChunkWorld::LoadExplorer(FString& Directory, bool& bIsSelect)
+{
+	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+	FString DefaultFile = TEXT("");
+	FString DefaultPath = TEXT("/.");
+	FString DirectoryName = TEXT("");
+
+	if (DesktopPlatform) {
+		DesktopPlatform->OpenDirectoryDialog(
+			NULL,
+			TEXT("select save path"),	
+			DefaultPath, Directory);
+	}
+	if (DirectoryName.Equals(FPaths::GetBaseFilename(Directory))) bIsSelect = false;
+	else bIsSelect = true;
 }
 
 void AChunkWorld::ToggleTargetVertex(FVector point)
