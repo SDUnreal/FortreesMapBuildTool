@@ -44,6 +44,8 @@ void AChunkWorld::DrawVertex(float LifeTime)
 {
 	FColor color;
 	float pointSize = 10.0f;
+	FVector position;
+	FlushPersistentDebugLines(GetWorld());
 
 	for (int x = 0; x < ChunkSize; x++)
 	{
@@ -51,7 +53,7 @@ void AChunkWorld::DrawVertex(float LifeTime)
 		{
 			for (int z = 0; z < ChunkSize; z++)
 			{
-				FVector position = FVector(x * CubeSize, y * CubeSize, z * CubeSize);
+				position = FVector(x * CubeSize, y * CubeSize, z * CubeSize);
 
 				if (TargetVertex == FVector(x, y, z) && targetVertexColorCount == 1)
 					color = FColor::Blue;
@@ -59,7 +61,6 @@ void AChunkWorld::DrawVertex(float LifeTime)
 					color = FColor::Red;
 				else
 					color = FColor::Green;
-
 				DrawDebugPoint(GetWorld(), position, pointSize, color, true, LifeTime);
 			}
 		}
