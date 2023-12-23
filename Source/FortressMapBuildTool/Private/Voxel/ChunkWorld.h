@@ -29,16 +29,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
 	int ChunkSize = 64;
 
-	UPROPERTY(EDItAnywhere, Category = "ChunkWorld")
+	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
 	int CubeSize = 100;
 
-	UPROPERTY(EDItAnywhere, Category = "ChunkWorld")
+	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
 	float zPosition = 2000.0f;
 
-	UPROPERTY(EDItAnywhere, BluePrintReadWrite, Category = "ChunkWorld")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChunkWorld")
 	FVector TargetVertex = { 0,0,0 };
 
-	TArray<float> voxels;
+	TArray<float> voxels; // 저장해야하는 데이터 -> txt나 그외.. 언리얼에서 찾아볼게요
 	TArray<AMarchingChunk*> chunks;
 
 	int targetVertexColorCount = 1;
@@ -60,4 +60,22 @@ public:
 
 	int GetVoxelIndex(int x, int y, int z) const;
 
+	void SaveMaps();
+
+	void LoadMaps(FString path); 
+
+	void ToggleTargetVertex(FVector point);
 };
+
+// UI -> 런타임에서 돌리는게 맞을까요? 대신 예쁜 UI는 조금 어려울수도
+
+// Enhanced Input
+// target vertex 움직이는
+// rf : 이동? bool 
+// space bar : toggle bool  
+// 저장 불러오기는 -> 마우스로 UI 클릭해서 사용하거나 bool
+// 카메라 무빙?  wasd camera에서 레이저충돌 -> 테스트 한번 해보고 -> 다른 모양 덩어리에서 도넛으로 만들려고할때 맵을.. 여기서 조금 문제생길거같긴해요
+// gizmo 동그란거 마우스로  카메라에서 
+
+
+

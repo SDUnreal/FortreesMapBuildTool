@@ -102,3 +102,23 @@ int AChunkWorld::GetVoxelIndex(int x, int y, int z) const
 {
 	return z * (ChunkSize + 1) * (ChunkSize + 1) + y * (ChunkSize + 1) + x;
 }
+
+void AChunkWorld::SaveMaps()
+{
+// TODO : 현재 맵을 세이브 하게 하는 기능 -> 
+
+}
+
+
+void AChunkWorld::LoadMaps(FString path)
+{
+// path에서 로드할 수 있게 해줌 
+
+}
+
+void AChunkWorld::ToggleTargetVertex(FVector point)
+{
+// 현재 위치에 있는 토글버텍스를 반전해주는 느낌.
+
+
+}
