@@ -25,8 +25,28 @@ void AChunkWorld::BeginPlay()
 	Super::BeginPlay();
 	directory = TEXT("");
 	IsSelect = false;
-	int i = 0;
 	SetVoxels(voxels);
+}
+
+// Called every frame
+void AChunkWorld::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void AChunkWorld::BuildWorld()
+{
+	int i = 0;
+	chunks[i] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(0, 0, zPosition), FRotator::ZeroRotator);
+	chunks[i]->SetChunkSize(ChunkSize);
+	chunks[i]->SetCubeSize(CubeSize);
+	chunks[i]->SetVoxels(voxels);
+	chunks[i]->GenerateTerrian();
+
+	//맵 빌딩 툴 특성상 다수의 청크가 필요하지 않아 주석처리했습니다.
+	/*
+
 	for (int x = -DrawDistance; x < DrawDistance; x++)
 	{
 		for (int y = -DrawDistance; y < DrawDistance; y++)
@@ -39,13 +59,7 @@ void AChunkWorld::BeginPlay()
 			i++;
 		}
 	}
-}
-
-// Called every frame
-void AChunkWorld::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	*/
 }
 
 void AChunkWorld::DrawVertex(float LifeTime)
@@ -64,9 +78,9 @@ void AChunkWorld::DrawVertex(float LifeTime)
 				position = FVector(x * CubeSize, y * CubeSize, z * CubeSize);
 
 				if (TargetVertex == FVector(x, y, z) && targetVertexColorCount == 1)
-					color = FColor::Blue;
-				else if (voxels[GetVoxelIndex(x, y, z)] == -1)
 					color = FColor::Red;
+				else if (voxels[GetVoxelIndex(x, y, z)] == -1)
+					color = FColor::Blue;
 				else
 					color = FColor::Green;
 				DrawDebugPoint(GetWorld(), position, pointSize, color, true, LifeTime);
@@ -153,6 +167,5 @@ void AChunkWorld::LoadExplorer(FString& Directory, bool& bIsSelect)
 void AChunkWorld::ToggleTargetVertex(FVector point)
 {
 // 현재 위치에 있는 토글버텍스를 반전해주는 느낌.
-
-
+	voxels[GetVoxelIndex(point.X, point.Y, point.Z)] *= -1;
 }

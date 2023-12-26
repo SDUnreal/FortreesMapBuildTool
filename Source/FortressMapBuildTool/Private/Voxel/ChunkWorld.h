@@ -57,6 +57,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 public:
+	UFUNCTION(BlueprintCallable, Category = "ChunkWorld")
+	void BuildWorld();
 
 	UFUNCTION(BlueprintCallable, Category = "ChunkWorld")
 	void DrawVertex(float LifeTime);
@@ -73,7 +75,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void LoadExplorer(FString& Directory, bool& bIsSelect);
-
+	UFUNCTION(BlueprintCallable, Category = "editor")
 	void ToggleTargetVertex(FVector point);
 };
 
