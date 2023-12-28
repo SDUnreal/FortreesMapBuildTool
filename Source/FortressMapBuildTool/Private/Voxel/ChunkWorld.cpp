@@ -143,8 +143,7 @@ void AChunkWorld::SaveMaps()
 
 void AChunkWorld::LoadMaps(FString path)
 {
-// path에서 로드할 수 있게 해줌 
-
+	// path에서 로드할 수 있게 해줌 
 }
 
 void AChunkWorld::LoadExplorer(FString& Directory, bool& bIsSelect)
@@ -168,4 +167,14 @@ void AChunkWorld::ToggleTargetVertex(FVector point)
 {
 // 현재 위치에 있는 토글버텍스를 반전해주는 느낌.
 	voxels[GetVoxelIndex(point.X, point.Y, point.Z)] *= -1;
+}
+
+FVector AChunkWorld::FindClosestVertex(FVector point)
+{
+	FVector result;
+	result.X = round(point.X / 200.0) * 200;
+	result.Y = round(point.Y / 200.0) * 200;
+	result.Z = round(point.Z / 200.0) * 200;
+
+	return result;
 }

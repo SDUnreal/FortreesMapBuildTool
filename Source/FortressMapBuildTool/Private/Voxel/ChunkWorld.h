@@ -15,8 +15,8 @@ UCLASS()
 class AChunkWorld : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AChunkWorld();
 
@@ -52,10 +52,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "ChunkWorld")
 	void BuildWorld();
@@ -71,12 +71,17 @@ public:
 	void SaveMaps();
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
-	void LoadMaps(FString path); 
+	void LoadMaps(FString path);
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void LoadExplorer(FString& Directory, bool& bIsSelect);
+
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void ToggleTargetVertex(FVector point);
+
+	UFUNCTION(BlueprintCallable, Category = "editor")
+	FVector FindClosestVertex(FVector point);
+
 };
 
 // UI -> 런타임에서 돌리는게 맞을까요? 대신 예쁜 UI는 조금 어려울수도
