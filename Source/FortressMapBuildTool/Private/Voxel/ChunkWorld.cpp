@@ -14,6 +14,8 @@ AChunkWorld::AChunkWorld()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	data.MapName = TEXT("DefaultMap");
+	data.TestNum = 1;
 }
 
 // Called when the game starts or when spawned
@@ -26,6 +28,7 @@ void AChunkWorld::BeginPlay()
 	directory = TEXT("");
 	IsSelect = false;
 	SetVoxels(voxels);
+	data.voxels = voxels;
 }
 
 // Called every frame
@@ -110,10 +113,11 @@ void AChunkWorld::SaveMaps()
 	{
 		this->LoadExplorer(directory, IsSelect);
 	}
-	FString JsonString = TEXT("HEllo");
-	//directory.Append(TEXT("/save.json"));
+	FString JsonString;
+	data.voxels = voxels;
+	directory.Append(TEXT("/save.json"));
 	FString Filename = TEXT("sav");
-	//FJsonObjectConverter::UStructToJsonObjectString(voxels, JsonString);
+	FJsonObjectConverter::UStructToJsonObjectString(data, JsonString);
 	FFileHelper::SaveStringToFile(*JsonString, *directory );
 	directory = TEXT("");
 }
@@ -147,6 +151,10 @@ void AChunkWorld::ToggleTargetVertex(FVector point)
 	voxels[GetVoxelIndex(point.X, point.Y, point.Z)] *= -1;
 }
 
+
+
+
+
 FVector AChunkWorld::FindClosestVertex(FVector point)
 {
 	FVector result;
@@ -157,6 +165,7 @@ FVector AChunkWorld::FindClosestVertex(FVector point)
 	return result;
 }
 
+<<<<<<< HEAD
 void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int Data)
 {
 	if (Size == 1)
@@ -215,4 +224,6 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 	}
 }
 
+=======
+>>>>>>> ed758910b21fbef2c4ca7be13381cb83261cf27e
 
