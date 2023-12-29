@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
+#include "../Util/VoxelDataSturct.h"
 #include"MarchingChunk.h"
 
 #include "GameFramework/Actor.h"
@@ -40,8 +40,11 @@ public:
 
 	TArray<float> voxels; // 저장해야하는 데이터 -> txt나 그외.. 언리얼에서 찾아볼게요
 	TArray<AMarchingChunk*> chunks;
+	FVoxelDataSturct data;
 
 
+
+	
 	// 파일탐색기 관련 데이터들
 	FString directory;
 	bool IsSelect;
@@ -76,6 +79,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void LoadExplorer(FString& Directory, bool& bIsSelect);
 
+	
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void ToggleTargetVertex(FVector point);
 
