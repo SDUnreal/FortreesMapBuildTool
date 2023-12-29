@@ -19,7 +19,7 @@ AChunkWorld::AChunkWorld()
 // Called when the game starts or when spawned
 void AChunkWorld::BeginPlay()
 {
-	voxels.Init(0, (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
+	voxels.Init(-1, (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
 	chunks.Init(nullptr, (2 * DrawDistance) * (2 * DrawDistance));
 
 	Super::BeginPlay();
@@ -93,29 +93,7 @@ void AChunkWorld::DrawVertex(float LifeTime)
 
 void AChunkWorld::SetVoxels(const TArray<float>& Voxels)
 {
-	const auto position = GetActorLocation() / 100;
-
-	for (int x = 0; x <= ChunkSize; x++)
-	{
-		for (int y = 0; y <= ChunkSize; y++)
-		{
-			for (int z = 0; z <= ChunkSize; z++)
-			{
-				//voxels[GetVoxelIndex(x, y, z)] = noise->GetNoise(x + position.X, y + position.Y, z + position.Z);
-				if (x == 0 || x == ChunkSize - 1 || y == 0 || y == ChunkSize - 1 || z == 0 || z == ChunkSize - 1)
-				{
-					// 외곽의 점들
-					voxels[GetVoxelIndex(x, y, z)] = 1.0f;
-				}
-				else
-				{
-					// 내부의 점들
-					voxels[GetVoxelIndex(x, y, z)] = -1.0f;
-				}
-			}
-		}
-	}
-	//voxels = Voxels;
+	this->voxels = Voxels;
 }
 
 int AChunkWorld::GetVoxelIndex(int x, int y, int z) const
@@ -178,3 +156,63 @@ FVector AChunkWorld::FindClosestVertex(FVector point)
 
 	return result;
 }
+
+void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int Data)
+{
+	if (Size == 1)
+	{
+		voxels[GetVoxelIndex(TargetPoint.X, TargetPoint.Y, TargetPoint.Z)] = Data;
+	}
+	else if(Size > 1)
+	{
+		int minX = FMath::Max(0, TargetPoint.X - Size / 2);
+		int maxX = FMath::Min(ChunkSize, TargetPoint.X + Size / 2);
+
+		int minY = FMath::Max(0, TargetPoint.Y - Size / 2);
+		int maxY = FMath::Min(ChunkSize, TargetPoint.Y + Size / 2);
+
+		int minZ = FMath::Max(0, TargetPoint.Z - Size / 2);
+		int maxZ = FMath::Min(ChunkSize, TargetPoint.Z + Size / 2);
+
+		switch (axis)
+		{
+			case XAxis:
+			{
+				for (int y = minY; y <= maxY; y++)
+				{
+					for (int z = minZ; z <= maxZ; z++)
+					{
+						voxels[GetVoxelIndex(TargetPoint.X, y, z)] = Data;
+					}
+				}
+			}
+			break;
+
+			case YAxis:
+			{
+				for (int x = minX; x <= maxX; x++)
+				{
+					for (int z = minZ; z <= maxZ; z++)
+					{
+						voxels[GetVoxelIndex(x, TargetPoint.Y, z)] = Data;
+					}
+				}
+			}
+			break;
+
+			case ZAxis:
+			{
+				for (int x = minX; x <= maxX; x++)
+				{
+					for (int y = minY; y <= maxY; y++)
+					{
+						voxels[GetVoxelIndex(x, y, TargetPoint.Z)] = Data;
+					}
+				}
+			}
+			break;
+		}
+	}
+}
+
+
