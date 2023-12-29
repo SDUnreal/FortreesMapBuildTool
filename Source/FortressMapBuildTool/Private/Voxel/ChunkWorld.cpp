@@ -151,10 +151,6 @@ void AChunkWorld::ToggleTargetVertex(FVector point)
 	voxels[GetVoxelIndex(point.X, point.Y, point.Z)] *= -1;
 }
 
-
-
-
-
 FVector AChunkWorld::FindClosestVertex(FVector point)
 {
 	FVector result;
@@ -165,7 +161,6 @@ FVector AChunkWorld::FindClosestVertex(FVector point)
 	return result;
 }
 
-<<<<<<< HEAD
 void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int Data)
 {
 	if (Size == 1)
@@ -223,7 +218,4 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 		}
 	}
 }
-
-=======
->>>>>>> ed758910b21fbef2c4ca7be13381cb83261cf27e
 
