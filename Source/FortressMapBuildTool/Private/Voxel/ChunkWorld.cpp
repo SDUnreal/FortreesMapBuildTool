@@ -5,6 +5,7 @@
 
 #include "Misc/FileHelper.h"
 #include "JsonObjectConverter.h"
+#include "Templates/SharedPointer.h"
 #include "IDesktopPlatform.h"
 #include "DesktopPlatformModule.h"
 
@@ -128,29 +129,59 @@ int AChunkWorld::GetVoxelIndex(int x, int y, int z) const
 
 void AChunkWorld::SaveMaps()
 {
-// TODO : 현재 맵을 세이브 하게 하는 기능 -> 
-
+// TODO : 현재 맵을 세이브 하게 하는 기능 -> Json으로sav파일저장.
 	IsSelect = false;
 	while (IsSelect == false)
 	{
-		this->LoadExplorer(directory, IsSelect);
+		this->saveExplorer(directories, IsSelect);
 	}
 	FString JsonString;
 	data.voxels = voxels;
-	directory.Append(TEXT("/save.json"));
-	FString Filename = TEXT("sav");
+	
+	directory = directories[0];
 	FJsonObjectConverter::UStructToJsonObjectString(data, JsonString);
-	FFileHelper::SaveStringToFile(*JsonString, *directory );
+	FFileHelper::SaveStringToFile(*JsonString, *directory);
 	directory = TEXT("");
+	directories.Pop();
 }
 
 
-void AChunkWorld::LoadMaps(FString path)
+void AChunkWorld::LoadMaps()
 {
 	// path에서 로드할 수 있게 해줌 
+	IsSelect = false;
+	while (IsSelect == false)
+	{
+		this->LoadExplorer(directories, IsSelect);
+	}
+	directory = directories[0];
+	FString JsonString;
+	FFileHelper::LoadFileToString(JsonString,*(directory));
+	TSharedRef<TJsonReader<TCHAR>>  JsonReader = TJsonReaderFactory<TCHAR>::Create(JsonString);
+	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
+
+	if (FJsonSerializer::Deserialize(JsonReader, JsonObject) && JsonObject.IsValid())
+	{
+		data.MapName = JsonObject->GetStringField("mapName");
+		data.TestNum = JsonObject->GetIntegerField("testNum");
+		TArray<TSharedPtr<FJsonValue>> JsonValueArray = JsonObject->GetArrayField("voxels");
+
+		for (int32 i = 0; i < JsonValueArray.Num(); i++)
+		{
+			data.voxels[i] = JsonValueArray[i]->AsNumber();
+		}
+		voxels = data.voxels;
+		UE_LOG(LogTemp,Warning,TEXT("SD Unreal : Deserialize success!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("SD Unreal : Deserialize failure"));
+	}
+	directory = TEXT("");
+	directories.Pop();
 }
 
-void AChunkWorld::LoadExplorer(FString& Directory, bool& bIsSelect)
+void AChunkWorld::LoadExplorer(TArray<FString>& Directories, bool& bIsSelect)
 {
 	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
 	FString DefaultFile = TEXT("");
@@ -158,12 +189,38 @@ void AChunkWorld::LoadExplorer(FString& Directory, bool& bIsSelect)
 	FString DirectoryName = TEXT("");
 
 	if (DesktopPlatform) {
-		DesktopPlatform->OpenDirectoryDialog(
+		DesktopPlatform->OpenFileDialog(
 			NULL,
-			TEXT("select save path"),	
-			DefaultPath, Directory);
+			TEXT("Select file"),	// 파일탐색기 제목
+			DefaultPath,	// 열고싶은 파일탐색기 경로
+			DefaultFile,	// 동작하지 않는 파라미터같음 (지정해도 파일 안열림)
+			TEXT("json Files (*.json)|*.json|"),	// 열고싶은 파일 종류
+			EFileDialogFlags::None,
+			Directories // 디렉토리의 파일 목록이 여기로 들어옴
+		);
 	}
-	if (DirectoryName.Equals(FPaths::GetBaseFilename(Directory))) bIsSelect = false;
+	if (Directories.Num() ==0) bIsSelect = false;
+	else bIsSelect = true;
+}
+
+void AChunkWorld::saveExplorer(TArray<FString>& Directories, bool& bIsSelect)
+{
+	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
+	FString DefaultFile = TEXT("");
+	FString DefaultPath = TEXT("/.");
+	FString DirectoryName = TEXT("");
+	if (DesktopPlatform) {
+		DesktopPlatform->SaveFileDialog(
+			NULL,
+			TEXT("Save file"),
+			DefaultPath,
+			DefaultFile,
+			TEXT("json Files(*.json)|*.json|"),
+			EFileDialogFlags::None,
+			Directories
+		);
+	}
+	if (Directories.Num() == 0) bIsSelect = false;
 	else bIsSelect = true;
 }
 

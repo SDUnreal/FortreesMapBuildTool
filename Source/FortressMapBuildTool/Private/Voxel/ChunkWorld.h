@@ -46,6 +46,7 @@ public:
 
 	
 	// 파일탐색기 관련 데이터들
+	TArray<FString> directories;
 	FString directory;
 	bool IsSelect;
 
@@ -74,11 +75,13 @@ public:
 	void SaveMaps();
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
-	void LoadMaps(FString path);
+	void LoadMaps();
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
-	void LoadExplorer(FString& Directory, bool& bIsSelect);
-
+	void LoadExplorer(TArray<FString>& Directories, bool& bIsSelect);
+	
+	UFUNCTION(BlueprintCallable, Category = "editor")
+	void saveExplorer(TArray<FString>& Directories, bool& bIsSelect);
 	
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void ToggleTargetVertex(FVector point);
