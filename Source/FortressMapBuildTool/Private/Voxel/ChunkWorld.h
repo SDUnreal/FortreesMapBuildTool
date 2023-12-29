@@ -11,10 +11,20 @@
 
 class MarchingChunk;
 
+
 UCLASS()
 class AChunkWorld : public AActor
 {
+
 	GENERATED_BODY()
+
+public:
+	enum EAxis
+	{
+		XAxis = 0,
+		YAxis = 1,
+		ZAxis = 2
+	};
 
 public:
 	// Sets default values for this actor's properties
@@ -36,7 +46,14 @@ public:
 	float zPosition = 2000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChunkWorld")
-	FVector TargetVertex = { 0,0,0 };
+	FVector TargetVertex = FVector(0);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "editer")
+	int targetSize = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "editer")
+	int targetAxis = XAxis;
+
 
 	TArray<float> voxels; // 저장해야하는 데이터 -> txt나 그외.. 언리얼에서 찾아볼게요
 	TArray<AMarchingChunk*> chunks;
@@ -89,6 +106,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	FVector FindClosestVertex(FVector point);
 
+	UFUNCTION(BlueprintCallable, Category = "editor")
+	void ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int Data);
 };
 
 // UI -> 런타임에서 돌리는게 맞을까요? 대신 예쁜 UI는 조금 어려울수도
