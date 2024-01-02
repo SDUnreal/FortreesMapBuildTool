@@ -42,28 +42,15 @@ void AChunkWorld::Tick(float DeltaTime)
 void AChunkWorld::BuildWorld()
 {
 	int i = 0;
+	if (chunks[i])
+	{
+		chunks[i]->Destroy();
+	}
 	chunks[i] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(0, 0, zPosition), FRotator::ZeroRotator);
 	chunks[i]->SetChunkSize(ChunkSize);
 	chunks[i]->SetCubeSize(CubeSize);
 	chunks[i]->SetVoxels(voxels);
 	chunks[i]->GenerateTerrian();
-
-	//맵 빌딩 툴 특성상 다수의 청크가 필요하지 않아 주석처리했습니다.
-	/*
-
-	for (int x = -DrawDistance; x < DrawDistance; x++)
-	{
-		for (int y = -DrawDistance; y < DrawDistance; y++)
-		{
-			chunks[i] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(x * ChunkSize * CubeSize, y * ChunkSize * CubeSize, zPosition), FRotator::ZeroRotator);
-			chunks[i]->SetChunkSize(ChunkSize);
-			chunks[i]->SetCubeSize(CubeSize);
-			chunks[i]->SetVoxels(voxels);
-			chunks[i]->GenerateTerrian();
-			i++;
-		}
-	}
-	*/
 }
 
 void AChunkWorld::DrawVertex(float LifeTime)
@@ -218,61 +205,64 @@ FVector AChunkWorld::FindClosestVertex(FVector point)
 	return result;
 }
 
-void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int Data)
+void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int depth, int Data)
 {
-	if (Size == 1)
+
+	int minX = FMath::Max(0, TargetPoint.X - Size / 2);
+	int maxX = FMath::Min(ChunkSize, TargetPoint.X + Size / 2);
+
+	int minY = FMath::Max(0, TargetPoint.Y - Size / 2);
+	int maxY = FMath::Min(ChunkSize, TargetPoint.Y + Size / 2);
+
+	int minZ = FMath::Max(0, TargetPoint.Z - Size / 2);
+	int maxZ = FMath::Min(ChunkSize, TargetPoint.Z + Size / 2);
+
+	switch (axis)
 	{
-		voxels[GetVoxelIndex(TargetPoint.X, TargetPoint.Y, TargetPoint.Z)] = Data;
-	}
-	else if(Size > 1)
-	{
-		int minX = FMath::Max(0, TargetPoint.X - Size / 2);
-		int maxX = FMath::Min(ChunkSize, TargetPoint.X + Size / 2);
-
-		int minY = FMath::Max(0, TargetPoint.Y - Size / 2);
-		int maxY = FMath::Min(ChunkSize, TargetPoint.Y + Size / 2);
-
-		int minZ = FMath::Max(0, TargetPoint.Z - Size / 2);
-		int maxZ = FMath::Min(ChunkSize, TargetPoint.Z + Size / 2);
-
-		switch (axis)
+		case XAxis:
 		{
-			case XAxis:
+			for (int i = 0; i < depth; i++)
 			{
 				for (int y = minY; y <= maxY; y++)
 				{
 					for (int z = minZ; z <= maxZ; z++)
 					{
-						voxels[GetVoxelIndex(TargetPoint.X, y, z)] = Data;
+						voxels[GetVoxelIndex(TargetPoint.X + i, y, z)] = Data;
 					}
 				}
-			}
-			break;
+			}		
+		}
+		break;
 
-			case YAxis:
+		case YAxis:
+		{
+			for (int i = 0; i < depth; i++)
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
 					for (int z = minZ; z <= maxZ; z++)
 					{
-						voxels[GetVoxelIndex(x, TargetPoint.Y, z)] = Data;
+						voxels[GetVoxelIndex(x, TargetPoint.Y + i, z)] = Data;
 					}
 				}
 			}
-			break;
+		}
+		break;
 
-			case ZAxis:
+		case ZAxis:
+		{
+			for (int i = 0; i < depth; i++)
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
 					for (int y = minY; y <= maxY; y++)
 					{
-						voxels[GetVoxelIndex(x, y, TargetPoint.Z)] = Data;
+						voxels[GetVoxelIndex(x, y, TargetPoint.Z + i)] = Data;
 					}
 				}
 			}
-			break;
 		}
+		break;
 	}
 }
 
