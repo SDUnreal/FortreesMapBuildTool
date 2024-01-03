@@ -207,6 +207,15 @@ FVector AChunkWorld::FindClosestVertex(FVector point)
 
 void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int depth, int Data)
 {
+	int minXDepth = FMath::Max(0, TargetPoint.X - depth / 2);
+	int maxXDepth = FMath::Min(ChunkSize, TargetPoint.X + depth / 2);
+
+	int minYDepth = FMath::Max(0, TargetPoint.Y - depth / 2);
+	int maxYDepth = FMath::Min(ChunkSize, TargetPoint.Y + depth / 2);
+
+	int minZDepth = FMath::Max(0, TargetPoint.Z - depth / 2);
+	int maxZDepth = FMath::Min(ChunkSize, TargetPoint.Z + depth / 2);
+
 
 	int minX = FMath::Max(0, TargetPoint.X - Size / 2);
 	int maxX = FMath::Min(ChunkSize, TargetPoint.X + Size / 2);
@@ -221,13 +230,13 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 	{
 		case XAxis:
 		{
-			for (int i = 0; i < depth; i++)
+			for (int i = minXDepth; i < maxXDepth; i++)
 			{
 				for (int y = minY; y <= maxY; y++)
 				{
 					for (int z = minZ; z <= maxZ; z++)
 					{
-						voxels[GetVoxelIndex(TargetPoint.X + i, y, z)] = Data;
+						voxels[GetVoxelIndex(i, y, z)] = Data;
 					}
 				}
 			}		
@@ -236,13 +245,13 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 
 		case YAxis:
 		{
-			for (int i = 0; i < depth; i++)
+			for (int i = minYDepth; i < maxYDepth; i++)
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
 					for (int z = minZ; z <= maxZ; z++)
 					{
-						voxels[GetVoxelIndex(x, TargetPoint.Y + i, z)] = Data;
+						voxels[GetVoxelIndex(x, i, z)] = Data;
 					}
 				}
 			}
@@ -251,13 +260,13 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 
 		case ZAxis:
 		{
-			for (int i = 0; i < depth; i++)
+			for (int i = minZDepth; i < maxZDepth; i++)
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
 					for (int y = minY; y <= maxY; y++)
 					{
-						voxels[GetVoxelIndex(x, y, TargetPoint.Z + i)] = Data;
+						voxels[GetVoxelIndex(x, y, i)] = Data;
 					}
 				}
 			}
