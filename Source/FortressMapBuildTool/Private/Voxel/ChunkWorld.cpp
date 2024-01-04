@@ -230,7 +230,7 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 	{
 		case XAxis:
 		{
-			for (int i = minXDepth; i < maxXDepth; i++)
+			for (int i = minXDepth; i <= maxXDepth; i++)
 			{
 				for (int y = minY; y <= maxY; y++)
 				{
@@ -245,7 +245,7 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 
 		case YAxis:
 		{
-			for (int i = minYDepth; i < maxYDepth; i++)
+			for (int i = minYDepth; i <= maxYDepth; i++)
 			{
 				for (int x = minX; x <= maxX; x++)
 				{
@@ -260,7 +260,7 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 
 		case ZAxis:
 		{
-			for (int i = minZDepth; i < maxZDepth; i++)
+			for (int i = minZDepth; i <= maxZDepth; i++)
 			{
 				for (int x = minX; x <= maxX; x++)
 				{

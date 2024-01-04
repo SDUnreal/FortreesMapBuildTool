@@ -49,10 +49,10 @@ public:
 	FVector TargetVertex = FVector(0);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "editer")
-	int targetSize = 0;
+	int targetSize = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "editer")
-	int targetDepth = 0;
+	int targetDepth = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "editer")
 	int targetAxis = XAxis;
