@@ -18,6 +18,6 @@ public:
     int32 TestNum;
     
     UPROPERTY(EditAnywhere,BlueprintReadWrite)
-    TArray<float> voxels;
+    TArray<int32> voxels;
 
 };

@@ -31,7 +31,7 @@ protected:
 
 
 private:
-	TArray<float> voxels;	//해당 배열은 복셀의 큐브들을 지정하는 것이 아닌, 큐브들의 꼭짓점들을 지정함.
+	TArray<int> voxels;	//해당 배열은 복셀의 큐브들을 지정하는 것이 아닌, 큐브들의 꼭짓점들을 지정함.
 	int triangleOrder[3] = { 0, 1, 2 };
 
 	void March(int x, int y, int z, const float cube[8]);
@@ -336,6 +336,7 @@ private:
 	};
 
 public:
-	void SetVoxels(TArray<float> Voxels) { this->voxels = Voxels; }
+	void SetVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance);
+	bool CompareVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance);
 
 };

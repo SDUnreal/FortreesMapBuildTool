@@ -9,30 +9,6 @@ AMarchingChunk::AMarchingChunk()
 
 void AMarchingChunk::GenerateHeightMap()
 {
-	const auto position = GetActorLocation() / 100;
-
-	/*
-	for (int x = 0; x <= size; x++)
-	{
-		for (int y = 0; y <= size; y++)
-		{
-			for (int z = 0; z <= size; z++)
-			{
-				//voxels[GetVoxelIndex(x, y, z)] = noise->GetNoise(x + position.X, y + position.Y, z + position.Z);
-				if (x == 0 || x == size - 1 || y == 0 || y == size - 1 || z == 0 || z == size - 1)
-				{
-					// 외곽의 점들
-					voxels[GetVoxelIndex(x, y, z)] = 1.0f;
-				}
-				else
-				{
-					// 내부의 점들
-					voxels[GetVoxelIndex(x, y, z)] = -1.0f;
-				}
-			}
-		}
-	}
-	*/
 }
 
 void AMarchingChunk::GenerateMesh()
@@ -141,5 +117,41 @@ float AMarchingChunk::GetInterPolationOffset(float V1, float V2) const
 {
 	const float delta = V2 - V1;
 	return delta == 0.0f ? surfaceLevel : (surfaceLevel - V1) / delta;
+}
+
+void AMarchingChunk::SetVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance)
+{
+	int XStart = ChunkNumber % DrawDistance * chunkSize;
+	int YStart = (ChunkNumber / DrawDistance) % DrawDistance * chunkSize;
+
+	for (int z = 0; z <= chunkSize; z++) 
+	{
+		for (int y = 0; y <= chunkSize; y++) 
+		{
+			for (int x = 0; x <= chunkSize; x++) 
+			{
+				voxels[GetVoxelIndex(x, y, z)] = Voxels[GetVoxelIndex(x + XStart, y + YStart, z)];
+			}
+		}
+	}
+}
+
+bool AMarchingChunk::CompareVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance)
+{
+	int XStart = ChunkNumber % DrawDistance;
+	int YStart = (ChunkNumber / DrawDistance) % DrawDistance;
+
+	for (int z = 0; z <= chunkSize; z++)
+	{
+		for (int y = 0; y <= chunkSize; y++)
+		{
+			for (int x = 0; x <= chunkSize; x++)
+			{
+				if (voxels[GetVoxelIndex(x, y, z)] != Voxels[GetVoxelIndex(x + XStart, y + YStart, z)])
+					return false;
+			}
+		}
+	}
+	return true;
 }
 

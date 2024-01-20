@@ -22,8 +22,13 @@ AChunkWorld::AChunkWorld()
 // Called when the game starts or when spawned
 void AChunkWorld::BeginPlay()
 {
-	voxels.Init(-1, (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
-	chunks.Init(nullptr, (2 * DrawDistance) * (2 * DrawDistance));
+	chunkArrSize = DrawDistance * DrawDistance;
+	voxels.Init(-1, chunkArrSize * (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
+	for (int i = 0; i < (ChunkSize + 1) * (ChunkSize + 1); i++)
+	{
+		voxels[i] = 1;
+	}
+	chunks.Init(nullptr, chunkArrSize);
 
 	Super::BeginPlay();
 	directory = TEXT("");
@@ -41,16 +46,25 @@ void AChunkWorld::Tick(float DeltaTime)
 
 void AChunkWorld::BuildWorld()
 {
-	int i = 0;
-	if (chunks[i])
+	for (int i = 0; i <= DrawDistance; i++)
 	{
-		chunks[i]->Destroy();
+		for (int j = 0; j <= DrawDistance; j++)
+		{
+			if (chunks[j])
+			{
+				if (chunks[j]->CompareVoxels(voxels, j, DrawDistance))
+					continue;
+				else
+					chunks[j]->Destroy();
+					
+			}
+			chunks[j] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(ChunkSize * CubeSize * i, ChunkSize * CubeSize * j, zPosition), FRotator::ZeroRotator);
+			chunks[j]->SetChunkSize(ChunkSize);
+			chunks[j]->SetCubeSize(CubeSize);
+			chunks[j]->SetVoxels(voxels, j, DrawDistance);
+			chunks[j]->GenerateTerrian();
+		}
 	}
-	chunks[i] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(0, 0, zPosition), FRotator::ZeroRotator);
-	chunks[i]->SetChunkSize(ChunkSize);
-	chunks[i]->SetCubeSize(CubeSize);
-	chunks[i]->SetVoxels(voxels);
-	chunks[i]->GenerateTerrian();
 }
 
 void AChunkWorld::DrawVertex(float LifeTime)
@@ -78,11 +92,10 @@ void AChunkWorld::DrawVertex(float LifeTime)
 			}
 		}
 	}
-
 	targetVertexColorCount *= -1;
 }
 
-void AChunkWorld::SetVoxels(const TArray<float>& Voxels)
+void AChunkWorld::SetVoxels(const TArray<int>& Voxels)
 {
 	this->voxels = Voxels;
 }
@@ -121,7 +134,7 @@ void AChunkWorld::LoadMaps()
 	}
 	directory = directories[0];
 	FString JsonString;
-	FFileHelper::LoadFileToString(JsonString,*(directory));
+	FFileHelper::LoadFileToString(JsonString, *(directory));
 	TSharedRef<TJsonReader<TCHAR>>  JsonReader = TJsonReaderFactory<TCHAR>::Create(JsonString);
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
 
@@ -136,11 +149,11 @@ void AChunkWorld::LoadMaps()
 			data.voxels[i] = JsonValueArray[i]->AsNumber();
 		}
 		voxels = data.voxels;
-		UE_LOG(LogTemp,Warning,TEXT("SD Unreal : Deserialize success!"));
+		UE_LOG(LogTemp, Warning, TEXT("SD Unreal : Deserialize success!"));
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("SD Unreal : Deserialize failure"));
+		UE_LOG(LogTemp, Warning, TEXT("SD Unreal : Deserialize failure"));
 	}
 	directory = TEXT("");
 	directories.Pop();
@@ -189,12 +202,6 @@ void AChunkWorld::saveExplorer(TArray<FString>& Directories, bool& bIsSelect)
 	else bIsSelect = true;
 }
 
-void AChunkWorld::ToggleTargetVertex(FVector point)
-{
-// 현재 위치에 있는 토글버텍스를 반전해주는 느낌.
-	voxels[GetVoxelIndex(point.X, point.Y, point.Z)] *= -1;
-}
-
 FVector AChunkWorld::FindClosestVertex(FVector point)
 {
 	FVector result;
@@ -207,24 +214,27 @@ FVector AChunkWorld::FindClosestVertex(FVector point)
 
 void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int depth, int Data)
 {
+
 	int minXDepth = FMath::Max(0, TargetPoint.X - depth / 2);
-	int maxXDepth = FMath::Min(ChunkSize, TargetPoint.X + depth / 2);
+	int maxXDepth = FMath::Min(ChunkSize * DrawDistance, TargetPoint.X + depth / 2);
 
 	int minYDepth = FMath::Max(0, TargetPoint.Y - depth / 2);
-	int maxYDepth = FMath::Min(ChunkSize, TargetPoint.Y + depth / 2);
+	int maxYDepth = FMath::Min(ChunkSize * DrawDistance, TargetPoint.Y + depth / 2);
 
 	int minZDepth = FMath::Max(0, TargetPoint.Z - depth / 2);
-	int maxZDepth = FMath::Min(ChunkSize, TargetPoint.Z + depth / 2);
+	int maxZDepth = FMath::Min(ChunkSize * DrawDistance, TargetPoint.Z + depth / 2);
 
 
 	int minX = FMath::Max(0, TargetPoint.X - Size / 2);
-	int maxX = FMath::Min(ChunkSize, TargetPoint.X + Size / 2);
+	int maxX = FMath::Min(ChunkSize * DrawDistance, TargetPoint.X + Size / 2);
 
 	int minY = FMath::Max(0, TargetPoint.Y - Size / 2);
-	int maxY = FMath::Min(ChunkSize, TargetPoint.Y + Size / 2);
+	int maxY = FMath::Min(ChunkSize * DrawDistance, TargetPoint.Y + Size / 2);
 
 	int minZ = FMath::Max(0, TargetPoint.Z - Size / 2);
-	int maxZ = FMath::Min(ChunkSize, TargetPoint.Z + Size / 2);
+	int maxZ = FMath::Min(ChunkSize * DrawDistance, TargetPoint.Z + Size / 2);
+
+	UE_LOG(LogTemp, Warning, TEXT("minXDepth: %d, maxXDepth: %d, minY: %d, maxY: %d, minZ: %d, maxZ: %d"), minXDepth, maxXDepth, minY, maxY, minZ, maxZ);
 
 	switch (axis)
 	{
@@ -273,5 +283,6 @@ void AChunkWorld::ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int 
 		}
 		break;
 	}
+
 }
 
