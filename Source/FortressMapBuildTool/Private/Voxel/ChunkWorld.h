@@ -109,6 +109,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int depth, int Data);
+
 };
 
 // UI -> 런타임에서 돌리는게 맞을까요? 대신 예쁜 UI는 조금 어려울수도

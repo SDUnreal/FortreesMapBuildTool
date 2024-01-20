@@ -22,9 +22,9 @@ AChunkWorld::AChunkWorld()
 // Called when the game starts or when spawned
 void AChunkWorld::BeginPlay()
 {
-	chunkArrSize = DrawDistance * DrawDistance;
+	chunkArrSize = (DrawDistance + 1) * (DrawDistance + 1);
 	voxels.Init(-1, chunkArrSize * (ChunkSize + 1) * (ChunkSize + 1) * (ChunkSize + 1));
-	for (int i = 0; i < (ChunkSize + 1) * (ChunkSize + 1); i++)
+	for (int i = 0; i < (ChunkSize + 1) * (ChunkSize + 1) * chunkArrSize; i++)
 	{
 		voxels[i] = 1;
 	}
@@ -46,23 +46,25 @@ void AChunkWorld::Tick(float DeltaTime)
 
 void AChunkWorld::BuildWorld()
 {
-	for (int i = 0; i <= DrawDistance; i++)
+	for (int x = 0; x <= DrawDistance; x++)
 	{
-		for (int j = 0; j <= DrawDistance; j++)
+		for (int y = 0;y  <= DrawDistance;y ++)
 		{
-			if (chunks[j])
+			
+			if (chunks[x * DrawDistance +y ] != nullptr)
 			{
-				if (chunks[j]->CompareVoxels(voxels, j, DrawDistance))
+				if (chunks[x * DrawDistance +y ]->CompareVoxels(voxels, x * DrawDistance + y, DrawDistance))
 					continue;
 				else
-					chunks[j]->Destroy();
-					
+				{
+					chunks[x * DrawDistance +y ]->Destroy();
+				}
 			}
-			chunks[j] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(ChunkSize * CubeSize * i, ChunkSize * CubeSize * j, zPosition), FRotator::ZeroRotator);
-			chunks[j]->SetChunkSize(ChunkSize);
-			chunks[j]->SetCubeSize(CubeSize);
-			chunks[j]->SetVoxels(voxels, j, DrawDistance);
-			chunks[j]->GenerateTerrian();
+			chunks[x * DrawDistance +y ] = GetWorld()->SpawnActor<class AMarchingChunk>(Chunk, FVector(ChunkSize * CubeSize * x, ChunkSize * CubeSize * y, zPosition), FRotator::ZeroRotator);
+			chunks[x * DrawDistance +y ]->SetChunkSize(ChunkSize);
+			chunks[x * DrawDistance +y ]->SetCubeSize(CubeSize);
+			chunks[x * DrawDistance +y ]->SetVoxels(voxels, x * DrawDistance + y, DrawDistance);
+			chunks[x * DrawDistance +y ]->GenerateTerrian();
 		}
 	}
 }
@@ -102,7 +104,7 @@ void AChunkWorld::SetVoxels(const TArray<int>& Voxels)
 
 int AChunkWorld::GetVoxelIndex(int x, int y, int z) const
 {
-	return z * (ChunkSize + 1) * (ChunkSize + 1) + y * (ChunkSize + 1) + x;
+	return z * (ChunkSize + 1) * (ChunkSize + 1) * DrawDistance + y * (ChunkSize + 1) * DrawDistance + x;
 }
 
 void AChunkWorld::SaveMaps()
