@@ -121,8 +121,8 @@ float AMarchingChunk::GetInterPolationOffset(float V1, float V2) const
 
 void AMarchingChunk::SetVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance)
 {
-	int YStart = ChunkNumber % DrawDistance * chunkSize;
-	int XStart = (ChunkNumber / DrawDistance) % DrawDistance * chunkSize;
+	int YStart = ChunkNumber % (DrawDistance + 1) * (chunkSize + 1);
+	int XStart = (ChunkNumber / (DrawDistance + 1)) % (DrawDistance + 1) * (chunkSize + 1);
 
 	for (int z = 0; z <= chunkSize; z++) 
 	{
@@ -138,8 +138,8 @@ void AMarchingChunk::SetVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDist
 
 bool AMarchingChunk::CompareVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance)
 {
-	int XStart = ChunkNumber % DrawDistance * chunkSize;
-	int YStart = (ChunkNumber / DrawDistance) % DrawDistance * chunkSize;
+	int XStart = ChunkNumber % (DrawDistance + 1) * (chunkSize + 1);
+	int YStart = (ChunkNumber / (DrawDistance + 1)) % (DrawDistance+1) * (chunkSize + 1);
 
 	for (int z = 0; z <= chunkSize; z++)
 	{
@@ -147,7 +147,7 @@ bool AMarchingChunk::CompareVoxels(TArray<int> Voxels, int ChunkNumber, int Draw
 		{
 			for (int x = 0; x <= chunkSize; x++)
 			{															
-				if (voxels[GetVoxelIndex(x, y, z)] != Voxels[GetVoxelIndex(x + XStart, y + YStart, z)])
+				if (voxels[GetVoxelIndex(x, y, z)] != Voxels[z * (chunkSize + 1) * (chunkSize + 1) * (DrawDistance + 1) * (DrawDistance + 1) + (y + YStart) + (x + XStart) * (chunkSize + 1) * (DrawDistance + 1)])
 					return false;
 			}
 		}
