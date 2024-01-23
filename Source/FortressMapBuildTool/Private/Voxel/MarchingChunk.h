@@ -19,6 +19,7 @@ class AMarchingChunk : public AChunkBase
 public:
 	AMarchingChunk();
 
+
 	UPROPERTY(EditDefaultsOnly, Category = "Marching Chunk")
 		float surfaceLevel = 0.0f;
 
@@ -31,7 +32,8 @@ protected:
 
 
 private:
-	TArray<int> voxels;	//해당 배열은 복셀의 큐브들을 지정하는 것이 아닌, 큐브들의 꼭짓점들을 지정함.
+	TSharedPtr<TArray<int>> voxelsPtr;
+	//TArray<int> voxels;	//해당 배열은 복셀의 큐브들을 지정하는 것이 아닌, 큐브들의 꼭짓점들을 지정함.
 	int triangleOrder[3] = { 0, 1, 2 };
 
 	void March(int x, int y, int z, const float cube[8]);
@@ -39,6 +41,9 @@ private:
 	int GetVoxelIndex(int x, int y, int z) const;
 
 	float GetInterPolationOffset(float V1, float V2) const;
+
+	int chunkNumber = 0;
+	int drawDistance = 0;
 
 	const int VertexOffset[8][3] = {
 	{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0},
@@ -336,7 +341,10 @@ private:
 	};
 
 public:
-	void SetVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance);
-	bool CompareVoxels(TArray<int> Voxels, int ChunkNumber, int DrawDistance);
+	void SetVoxels(TArray<int> Voxels);
+	bool CompareVoxels(TArray<int> Voxels);
+
+	void SetChunkNumber(int Num) { this->chunkNumber = Num; }
+	void SetDrawDistance(int DrawDistance) { this->drawDistance = DrawDistance; }
 
 };
