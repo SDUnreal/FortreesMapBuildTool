@@ -41,8 +41,7 @@ void AMarchingChunk::GenerateMesh()
 			{
 				for (int i = 0; i < 8; i++)
 				{
-					if(x<(chunkSize-1) && y< (chunkSize - 1) && z< (chunkSize - 1))
-					//UE_LOG(LogTemp, Log, TEXT("chunkNumber : %d, x : %d, y : %d, z : %d"),chunkNumber, x, y, z);
+					//if(x<(chunkSize-1) && y< (chunkSize - 1) && z< (chunkSize - 1))
 					cube[i] = (*voxelsPtr)[GetVoxelIndex(x + VertexOffset[i][0], y + VertexOffset[i][1], z + VertexOffset[i][2])]; // 각 꼭짓점의 heightmap값을 cube 배열에 저장합니다.
 				}
 

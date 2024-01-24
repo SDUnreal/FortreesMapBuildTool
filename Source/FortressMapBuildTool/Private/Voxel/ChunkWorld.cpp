@@ -79,9 +79,9 @@ void AChunkWorld::DrawVertex(float LifeTime)
 	FVector position;
 	FlushPersistentDebugLines(GetWorld());
 
-	for (int x = 0; x < ChunkSize; x++)
+	for (int x = 0; x < ChunkSize * DrawDistance; x++)
 	{
-		for (int y = 0; y < ChunkSize; y++)
+		for (int y = 0; y < ChunkSize * DrawDistance; y++)
 		{
 			for (int z = 0; z < ChunkSize; z++)
 			{
