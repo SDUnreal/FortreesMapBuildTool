@@ -4,39 +4,18 @@
 
 AMarchingChunk::AMarchingChunk()
 {
-	voxels.SetNum((chunkSize + 1) * (chunkSize + 1) * (chunkSize + 1));
 }
 
 void AMarchingChunk::GenerateHeightMap()
 {
-	const auto position = GetActorLocation() / 100;
-
-	/*
-	for (int x = 0; x <= size; x++)
-	{
-		for (int y = 0; y <= size; y++)
-		{
-			for (int z = 0; z <= size; z++)
-			{
-				//voxels[GetVoxelIndex(x, y, z)] = noise->GetNoise(x + position.X, y + position.Y, z + position.Z);
-				if (x == 0 || x == size - 1 || y == 0 || y == size - 1 || z == 0 || z == size - 1)
-				{
-					// 외곽의 점들
-					voxels[GetVoxelIndex(x, y, z)] = 1.0f;
-				}
-				else
-				{
-					// 내부의 점들
-					voxels[GetVoxelIndex(x, y, z)] = -1.0f;
-				}
-			}
-		}
-	}
-	*/
 }
 
 void AMarchingChunk::GenerateMesh()
 {
+
+	int XStart = (chunkNumber % drawDistance) * (chunkSize); //청크별 좌표잡아주는 친구
+	int YStart = (chunkNumber / drawDistance) * (chunkSize); //
+
 	if (surfaceLevel > 0.0f)
 	{
 		triangleOrder[0] = 0;
@@ -54,15 +33,16 @@ void AMarchingChunk::GenerateMesh()
 	float cube[8];	//현재 복셀의 꼭짓점 값을 저장하는 배열
 
 	//각 복셀 순회
-	for (int x = 0; x < chunkSize; x++)
+	for (int z = 0; z < chunkSize; z++)
 	{
-		for (int y = 0; y < chunkSize; y++)
+		for (int y = YStart; y < chunkSize + YStart; y++)
 		{
-			for (int z = 0; z < chunkSize; z++)
+			for (int x = XStart; x < chunkSize + XStart; x++)
 			{
 				for (int i = 0; i < 8; i++)
 				{
-					cube[i] = voxels[GetVoxelIndex(x + VertexOffset[i][0], y + VertexOffset[i][1], z + VertexOffset[i][2])]; // 각 꼭짓점의 heightmap값을 cube 배열에 저장합니다.
+					//if(x<(chunkSize-1) && y< (chunkSize - 1) && z< (chunkSize - 1))
+					cube[i] = (*voxelsPtr)[GetVoxelIndex(x + VertexOffset[i][0], y + VertexOffset[i][1], z + VertexOffset[i][2])]; // 각 꼭짓점의 heightmap값을 cube 배열에 저장합니다.
 				}
 
 				//현재 큐브에 대하여 메시를 생성함.
@@ -134,12 +114,60 @@ void AMarchingChunk::March(int x, int y, int z, const float cube[8])
 
 int AMarchingChunk::GetVoxelIndex(int x, int y, int z) const
 {
-	return z * (chunkSize + 1) * (chunkSize + 1) + y * (chunkSize + 1) + x;
+	
+	//'return z * (chunkSize) * (chunkSize)+(chunkSize)*y + x;
+	//3차원 배열을 1차원으로 표현하기에 이 함수를 이용해 인덱스를 검색합니다.
+	return z * (chunkSize) * (chunkSize) * (drawDistance * drawDistance) + y * (chunkSize) * drawDistance + x;
 }
 
 float AMarchingChunk::GetInterPolationOffset(float V1, float V2) const
 {
 	const float delta = V2 - V1;
 	return delta == 0.0f ? surfaceLevel : (surfaceLevel - V1) / delta;
+}
+
+void AMarchingChunk::SetVoxels(TArray<int> Voxels)
+{
+
+	voxelsPtr = MakeShared<TArray<int>>(Voxels); 
+
+	/*
+	int XStart = (ChunkIndex % DrawDistance) * (chunkSize);
+	int YStart = (ChunkIndex / DrawDistance)* (chunkSize);
+
+	for (int z = 0; z < chunkSize; z++)
+	{
+		for (int y = 0; y < chunkSize; y++)
+		{
+			for (int x = 0; x < chunkSize; x++)
+			{
+				voxels[GetVoxelIndex(x, y, z)] = Voxels[z * (chunkSize) * (chunkSize) * (DrawDistance) * (DrawDistance)+(y + YStart) * (chunkSize) * (DrawDistance)+(x + XStart)];	//문제
+				if (voxels[GetVoxelIndex(x, y, z)] == 1)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("debugging"))
+				}
+			}
+		}
+	}
+	*/
+}
+
+bool AMarchingChunk::CompareVoxels(TArray<int> Voxels)
+{
+	int XStart = (chunkNumber % drawDistance) * (chunkSize);
+	int YStart = (chunkNumber / drawDistance) * (chunkSize);
+
+	for (int z = 0; z < chunkSize; z++)
+	{
+		for (int y = YStart; y < chunkSize +YStart; y++)
+		{
+			for (int x = XStart; x < chunkSize + XStart; x++)
+			{															
+				if ((*voxelsPtr)[GetVoxelIndex(x, y, z)] != Voxels[GetVoxelIndex(x, y, z)])
+					return false;
+			}
+		}
+	}
+	return true;
 }
 

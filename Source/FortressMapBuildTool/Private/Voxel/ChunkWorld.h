@@ -34,13 +34,13 @@ public:
 	TSubclassOf<AMarchingChunk> Chunk;
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
-	int DrawDistance = 5;
+	int DrawDistance = 5;	//DrawDistance * DrawDistnace 크기의 정 사각형 맵이 생성됩니다.
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
-	int ChunkSize = 64;
+	int ChunkSize = 8;
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
-	int CubeSize = 100;
+	int CubeSize = 200;
 
 	UPROPERTY(EditAnywhere, Category = "ChunkWorld")
 	float zPosition = 2000.0f;
@@ -58,8 +58,9 @@ public:
 	int targetAxis = XAxis;
 
 
-	TArray<float> voxels; // 저장해야하는 데이터 -> txt나 그외.. 언리얼에서 찾아볼게요
+	TArray<int> voxels; //맵 데이터
 	TArray<AMarchingChunk*> chunks;
+	int chunkArrSize = 0;
 	FVoxelDataSturct data;
 
 
@@ -87,7 +88,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ChunkWorld")
 	void DrawVertex(float LifeTime);
 
-	void SetVoxels(const TArray<float>& Voxels);
+	void SetVoxels(const TArray<int>& Voxels);
 
 	int GetVoxelIndex(int x, int y, int z) const;
 
@@ -102,15 +103,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void saveExplorer(TArray<FString>& Directories, bool& bIsSelect);
-	
-	UFUNCTION(BlueprintCallable, Category = "editor")
-	void ToggleTargetVertex(FVector point);
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	FVector FindClosestVertex(FVector point);
 
 	UFUNCTION(BlueprintCallable, Category = "editor")
 	void ChangeVoxelsData(int Size, FVector TargetPoint, int axis, int depth, int Data);
+
 };
 
 // UI -> 런타임에서 돌리는게 맞을까요? 대신 예쁜 UI는 조금 어려울수도
